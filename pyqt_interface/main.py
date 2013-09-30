@@ -15,6 +15,11 @@ from matplotlib.figure import Figure
 
 from get_station import get_station_data
 
+try:
+    from PyQt4.QtCore import QString
+except ImportError:
+    QtCore.QString = str
+
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -53,8 +58,9 @@ class MainWindow(QtGui.QMainWindow):
                                 self.stopAcquisition) 
         
     def startAcquisition(self):
-        self.timer.start(int(self.ui.spinBox.value()) * 1000, self)
-        self.ui.checkBox.setChecked(True)
+        if not self.timer.isActive():
+            self.timer.start(int(self.ui.spinBox.value()) * 1000, self)
+            self.ui.checkBox.setChecked(True)
         
     def stopAcquisition(self):
         self.timer.stop()
@@ -114,7 +120,8 @@ class MainWindow(QtGui.QMainWindow):
         conn.close()
     
     def closeEvent(self, e):
-        self.writeToDatabase()
+        pass
+#        self.writeToDatabase()
     
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
